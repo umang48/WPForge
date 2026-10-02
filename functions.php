@@ -25,6 +25,7 @@ $wpforge_includes = array(
 	'/inc/template-functions.php',// Custom template tags and functions.
 	'/inc/customizer.php',        // Customizer additions.
     '/inc/post-types.php',        // Register custom post types and taxonomies.
+    '/inc/meta-boxes.php',        // Register custom meta boxes.
 );
 
 foreach ( $wpforge_includes as $file ) {
