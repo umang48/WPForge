@@ -30,6 +30,8 @@ $wpforge_includes = array(
 	'/inc/rest-api.php',          // Custom REST API endpoints.
 	'/inc/block-styles.php',      // Register custom Gutenberg block styles.
 	'/inc/widgets.php',           // Register widget areas.
+	'/inc/performance.php',       // Performance optimization and bloat removal.
+	'/inc/security.php',          // Security hardening and safe database queries.
 );
 
 foreach ( $wpforge_includes as $file ) {
