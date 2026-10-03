@@ -27,6 +27,8 @@ $wpforge_includes = array(
     '/inc/post-types.php',        // Register custom post types and taxonomies.
     '/inc/meta-boxes.php',        // Register custom meta boxes.
 	'/inc/ajax.php',              // Handle AJAX requests for filtering projects.
+	'/inc/rest-api.php',          // Custom REST API endpoints.
+	'/inc/block-styles.php',      // Register custom Gutenberg block styles.
 );
 
 foreach ( $wpforge_includes as $file ) {

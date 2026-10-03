@@ -1,0 +1,40 @@
+/* 
+ * Custom Block Styles 
+ */
+
+/* Group: Card Panel */
+.wp-block-group.is-style-wpforge-card-panel {
+    background-color: var(--wp--preset--color--surface);
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wp-block-group.is-style-wpforge-card-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* Button: Arrow Button */
+.wp-block-button.is-style-wpforge-arrow-button .wp-block-button__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wp-block-button.is-style-wpforge-arrow-button .wp-block-button__link::after {
+    content: "→";
+    transition: transform 0.2s ease;
+}
+
+.wp-block-button.is-style-wpforge-arrow-button .wp-block-button__link:hover::after {
+    transform: translateX(4px);
+}
+
+/* Image: Subtle Shadow */
+.wp-block-image.is-style-wpforge-subtle-shadow img {
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
