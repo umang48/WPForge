@@ -15,9 +15,29 @@ get_header(); ?>
             the_archive_description( '<div class="archive-description">', '</div>' );
             ?>
             
-            <!-- AJAX Filter Navigation (Placeholder for Phase 4) -->
-            <div class="project-filters" id="project-filters">
-                <!-- Filter buttons will be injected here -->
+            <!-- AJAX Filter Navigation -->
+            <div class="project-filters" id="project-filters" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; justify-content: center;">
+                <button class="filter-btn active" data-filter="all" style="padding: 8px 20px; border: 2px solid #0073aa; background: #0073aa; color: #fff; border-radius: 20px; cursor: pointer; font-weight: bold;">
+                    <?php esc_html_e( 'All', 'wpforge' ); ?>
+                </button>
+                
+                <?php
+                // Dynamically fetch all Project Type terms
+                $terms = get_terms( array(
+                    'taxonomy'   => 'project_type',
+                    'hide_empty' => true, // Only show terms that actually have projects
+                ) );
+
+                if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
+                    foreach ( $terms as $term ) {
+                        printf(
+                            '<button class="filter-btn" data-filter="%s" style="padding: 8px 20px; border: 2px solid #0073aa; background: transparent; color: #0073aa; border-radius: 20px; cursor: pointer; font-weight: bold;">%s</button>',
+                            esc_attr( $term->slug ),
+                            esc_html( $term->name )
+                        );
+                    }
+                }
+                ?>
             </div>
         </header>
 

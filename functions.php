@@ -26,6 +26,7 @@ $wpforge_includes = array(
 	'/inc/customizer.php',        // Customizer additions.
     '/inc/post-types.php',        // Register custom post types and taxonomies.
     '/inc/meta-boxes.php',        // Register custom meta boxes.
+	'/inc/ajax.php',              // Handle AJAX requests for filtering projects.
 );
 
 foreach ( $wpforge_includes as $file ) {
