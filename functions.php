@@ -29,6 +29,7 @@ $wpforge_includes = array(
 	'/inc/ajax.php',              // Handle AJAX requests for filtering projects.
 	'/inc/rest-api.php',          // Custom REST API endpoints.
 	'/inc/block-styles.php',      // Register custom Gutenberg block styles.
+	'/inc/widgets.php',           // Register widget areas.
 );
 
 foreach ( $wpforge_includes as $file ) {
