@@ -114,6 +114,24 @@ get_header();
         </div>
     </section>
 
+
+    <!-- 4. DYNAMIC REST API SECTION -->
+    <section class="api-projects-section" style="padding: 80px 0; background: #f0f7fa;">
+        <div class="container">
+            <header class="section-header" style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.2em; margin-bottom: 10px;"><?php esc_html_e( 'API-Powered Feed', 'wpforge' ); ?></h2>
+                <p style="color: #666; font-size: 1.1em;"><?php esc_html_e( 'These projects are fetched asynchronously via our custom REST API endpoint.', 'wpforge' ); ?></p>
+            </header>
+
+            <!-- The mount point for our JavaScript -->
+            <div id="rest-api-projects-grid" class="project-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px;">
+                <p style="text-align: center; width: 100%; color: #666; font-style: italic;">
+                    <?php esc_html_e( 'Loading latest projects...', 'wpforge' ); ?>
+                </p>
+            </div>
+        </div>
+    </section>
+
 </main><!-- #primary -->
 
 <?php

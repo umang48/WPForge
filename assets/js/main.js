@@ -58,3 +58,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+
+// REST API Fetch Logic for Front Page
+document.addEventListener('DOMContentLoaded', () => {
+    const apiGrid = document.getElementById('rest-api-projects-grid');
+
+    if (!apiGrid) return; // Exit if we aren't on the front page
+
+    fetch(wpforgeData.custom_rest_url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(projects => {
+            // Clear the loading message
+            apiGrid.innerHTML = '';
+
+            if (projects.length === 0) {
+                apiGrid.innerHTML = '<p>No projects found.</p>';
+                return;
+            }
+
+            // Iterate over the JSON payload and construct the DOM
+            projects.forEach(project => {
+                const termString = project.terms.length > 0 
+                    ? `<span style="font-size: 0.8em; text-transform: uppercase; color: #666; font-weight: bold;">${project.terms.join(', ')}</span>` 
+                    : '';
+
+                const imageHtml = project.thumbnail 
+                    ? `<div class="project-thumbnail"><a href="${project.link}"><img src="${project.thumbnail}" alt="${project.title}" style="width: 100%; height: auto; display: block;" /></a></div>`
+                    : '';
+
+                // Build the card HTML natively in JS
+                const cardHtml = `
+                    <article class="project-card" style="border: 1px solid #eee; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; background: #fff;">
+                        ${imageHtml}
+                        <div class="project-content" style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
+                            <header class="entry-header">
+                                ${termString}
+                                <h2 style="margin: 10px 0 15px; font-size: 1.5em;">
+                                    <a href="${project.link}" style="text-decoration: none; color: #333;">${project.title}</a>
+                                </h2>
+                            </header>
+                            
+                            <div class="entry-summary" style="margin-bottom: 20px; color: #555; line-height: 1.6;">
+                                ${project.excerpt}
+                            </div>
+                            
+                            <div class="project-meta" style="margin-bottom: 20px; font-size: 0.9em; color: #666;">
+                                ${project.tech ? `<strong>Tech:</strong> ${project.tech}` : ''}
+                            </div>
+                            
+                            <footer class="entry-footer" style="margin-top: auto;">
+                                <a href="${project.link}" style="display: inline-block; padding: 10px 20px; background: #0073aa; color: #fff; text-decoration: none; border-radius: 4px;">
+                                    View Details &rarr;
+                                </a>
+                            </footer>
+                        </div>
+                    </article>
+                `;
+
+                apiGrid.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        })
+        .catch(error => {
+            console.error('REST API Error:', error);
+            apiGrid.innerHTML = `<p>${wpforgeData.error_msg}</p>`;
+        });
+});

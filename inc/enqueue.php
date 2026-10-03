@@ -31,11 +31,13 @@ function wpforge_scripts() {
 
     // 5. Securely pass PHP data to our frontend JavaScript
     // This primes the theme for the AJAX filtering and REST API fetch features.
+    // Securely pass PHP data to our frontend JavaScript
     wp_localize_script( 'wpforge-main', 'wpforgeData', array(
-        'ajax_url'   => admin_url( 'admin-ajax.php' ),
-        'rest_url'   => esc_url_raw( rest_url( 'wp/v2/projects' ) ),
-        'nonce'      => wp_create_nonce( 'wpforge_ajax_nonce' ),
-        'error_msg'  => __( 'Something went wrong. Please try again.', 'wpforge' ),
+        'ajax_url'        => admin_url( 'admin-ajax.php' ),
+        'rest_url'        => esc_url_raw( rest_url( 'wp/v2/projects' ) ), // Native endpoint
+        'custom_rest_url' => esc_url_raw( rest_url( 'wpforge/v1/latest-projects' ) ), // Our new endpoint
+        'nonce'           => wp_create_nonce( 'wpforge_ajax_nonce' ),
+        'error_msg'       => __( 'Something went wrong. Please try again.', 'wpforge' ),
     ) );
 
     // 6. Support for threaded comments
