@@ -10,6 +10,13 @@ get_header();
 
 <main id="primary" class="site-main">
     <div class="container">
+
+    <?php 
+        // Output SEO Breadcrumbs
+        if ( function_exists( 'wpforge_breadcrumbs' ) ) {
+            wpforge_breadcrumbs();
+        } 
+        ?>
         
         <?php
         while ( have_posts() ) :

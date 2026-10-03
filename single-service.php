@@ -9,6 +9,13 @@ get_header();
 ?>
 
 <main id="primary" class="site-main">
+ <div class="container">
+<?php 
+        // Output SEO Breadcrumbs
+        if ( function_exists( 'wpforge_breadcrumbs' ) ) {
+            wpforge_breadcrumbs();
+        } 
+        ?>
     <?php
     while ( have_posts() ) :
         the_post();
@@ -73,6 +80,7 @@ get_header();
         <?php
     endwhile; // End of the loop.
     ?>
+    </div><!-- .container -->
 </main><!-- #primary -->
 
 <?php

@@ -32,6 +32,7 @@ $wpforge_includes = array(
 	'/inc/widgets.php',           // Register widget areas.
 	'/inc/performance.php',       // Performance optimization and bloat removal.
 	'/inc/security.php',          // Security hardening and safe database queries.
+	'/inc/demo-importer.php',     // Programmatic demo data importer.
 );
 
 foreach ( $wpforge_includes as $file ) {
@@ -41,4 +42,24 @@ foreach ( $wpforge_includes as $file ) {
 	} else {
 		error_log( sprintf( 'WPForge Error: Failed to load %s', $filepath ) );
 	}
+}
+
+
+/**
+ * Render SEO Breadcrumbs (Rank Math or Yoast)
+ */
+function wpforge_breadcrumbs() {
+    // Check for Rank Math
+    if ( function_exists( 'rank_math_the_breadcrumbs' ) ) {
+        echo '<div class="wpforge-breadcrumbs" style="margin-bottom: 20px; font-size: 0.9em; color: #666;">';
+        rank_math_the_breadcrumbs();
+        echo '</div>';
+        return;
+    }
+
+    // Check for Yoast
+    if ( function_exists( 'yoast_breadcrumb' ) ) {
+        yoast_breadcrumb( '<div class="wpforge-breadcrumbs" style="margin-bottom: 20px; font-size: 0.9em; color: #666;">', '</div>' );
+        return;
+    }
 }
