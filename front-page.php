@@ -139,6 +139,56 @@ if ( isset( $options['show_projects'] ) && $options['show_projects'] === '1' ) :
     </section>
 <?php endif; ?>
 
+
+<?php 
+    // TESTIMONIALS SECTION
+    if ( isset( $options['show_testimonials'] ) && $options['show_testimonials'] === '1' ) : 
+        
+        $testimonial_args = array(
+            'post_type'      => 'testimonial',
+            'posts_per_page' => 3,
+            'orderby'        => 'menu_order', // Respects the page-attribute order
+            'order'          => 'ASC',
+        );
+        $testimonials_query = new WP_Query( $testimonial_args );
+        
+        if ( $testimonials_query->have_posts() ) :
+    ?>
+        <section class="testimonials-section" style="padding: 80px 0; background: var(--wp--preset--color--surface);">
+            <div class="container">
+                <header class="section-header" style="text-align: center; margin-bottom: 50px;">
+                    <h2 style="font-size: 2.2em;"><?php esc_html_e( 'Client Feedback', 'wpforge' ); ?></h2>
+                </header>
+                
+                <div class="testimonials-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <?php while ( $testimonials_query->have_posts() ) : $testimonials_query->the_post(); ?>
+                        <blockquote class="testimonial-card" style="background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; margin: 0;">
+                            
+                            <div class="testimonial-content" style="font-size: 1.1em; font-style: italic; color: #555; margin-bottom: 20px;">
+                                <?php the_content(); ?>
+                            </div>
+                            
+                            <footer class="testimonial-author" style="display: flex; align-items: center; gap: 15px;">
+                                <?php if ( has_post_thumbnail() ) : ?>
+                                    <div class="author-avatar" style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                                        <?php the_post_thumbnail( 'thumbnail', array( 'style' => 'width: 100%; height: 100%; object-fit: cover;' ) ); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <cite style="font-weight: bold; font-style: normal; color: var(--wp--preset--color--primary);">
+                                    <?php the_title(); ?>
+                                </cite>
+                            </footer>
+                            
+                        </blockquote>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            </div>
+        </section>
+    <?php 
+        endif; 
+    endif; 
+    ?>
+
 </main><!-- #primary -->
 
 <?php
