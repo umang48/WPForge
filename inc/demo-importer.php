@@ -11,7 +11,8 @@ defined( 'ABSPATH' ) || exit;
  * 1. Add the menu page under Appearance
  */
 function wpforge_register_demo_page() {
-    add_theme_page(
+    add_submenu_page(
+        'wpforge-options',                   // Parent slug (Connects to our new menu)
         __( 'WPForge Demo Data', 'wpforge' ),
         __( 'Import Demo Data', 'wpforge' ),
         'manage_options',

@@ -91,3 +91,48 @@ input[type="submit"]:hover {
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
+
+
+/* 
+ * Navigation Menus 
+ */
+.main-navigation ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 30px;
+    align-items: center;
+}
+
+.main-navigation a {
+    text-decoration: none;
+    color: var(--wp--preset--color--text-main);
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.main-navigation a:hover {
+    color: var(--wp--preset--color--primary);
+}
+
+.footer-navigation ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+.footer-navigation a {
+    text-decoration: none;
+    color: var(--wp--preset--color--text-muted);
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.footer-navigation a:hover {
+    color: var(--wp--preset--color--primary);
+}

@@ -33,6 +33,7 @@ $wpforge_includes = array(
 	'/inc/performance.php',       // Performance optimization and bloat removal.
 	'/inc/security.php',          // Security hardening and safe database queries.
 	'/inc/demo-importer.php',     // Programmatic demo data importer.
+	'/inc/admin-menu.php',        // Admin menu and settings page.
 );
 
 foreach ( $wpforge_includes as $file ) {
