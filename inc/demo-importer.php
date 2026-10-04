@@ -108,6 +108,68 @@ function wpforge_process_demo_import() {
         wp_insert_post( array( 'post_title' => 'Fintech Dashboard', 'post_content' => 'Sample content', 'post_status' => 'publish', 'post_type' => 'project' ) );
     }
 
+
+    // ... existing code for Pages, Menus, and Projects ...
+
+    // E. Generate Dummy Team Members
+    $dummy_team = array(
+        array(
+            'name'  => 'Jane Doe',
+            'bio'   => '<!-- wp:paragraph --><p>Lead Full-Stack Developer with over 10 years of experience specializing in React, Laravel, and enterprise WordPress architectures.</p><!-- /wp:paragraph -->',
+            'order' => 1
+        ),
+        array(
+            'name'  => 'John Smith',
+            'bio'   => '<!-- wp:paragraph --><p>Senior UI/UX Designer focused on creating WCAG-compliant, high-performance design systems for modern digital agencies.</p><!-- /wp:paragraph -->',
+            'order' => 2
+        )
+    );
+
+    foreach ( $dummy_team as $member ) {
+        if ( ! post_exists( $member['name'], '', '', 'team' ) ) {
+            wp_insert_post( array(
+                'post_title'   => $member['name'],
+                'post_content' => $member['bio'],
+                'post_status'  => 'publish',
+                'post_type'    => 'team',
+                'menu_order'   => $member['order'],
+            ) );
+        }
+    }
+
+    // F. Generate Dummy Testimonials
+    $dummy_testimonials = array(
+        array(
+            'author' => 'Sarah Jenkins, CEO at TechCorp',
+            'quote'  => '<!-- wp:paragraph --><p>"WPForge transformed our online presence. Their attention to performance, security hardening, and structural detail is unmatched in the industry."</p><!-- /wp:paragraph -->',
+            'order'  => 1
+        ),
+        array(
+            'author' => 'Michael Chen, Founder of StartUp Inc.',
+            'quote'  => '<!-- wp:paragraph --><p>"The custom REST API integration allowed us to scale our React mobile app seamlessly. The backend is remarkably clean and incredibly fast. Highly recommended!"</p><!-- /wp:paragraph -->',
+            'order'  => 2
+        ),
+        array(
+            'author' => 'Elena Rodriguez, CTO at Nexus Solutions',
+            'quote'  => '<!-- wp:paragraph --><p>"Finally, a theme that respects proper data architecture. Bypassing heavy page builders for native block patterns improved our Core Web Vitals instantly."</p><!-- /wp:paragraph -->',
+            'order'  => 3
+        )
+    );
+
+    foreach ( $dummy_testimonials as $testimonial ) {
+        if ( ! post_exists( $testimonial['author'], '', '', 'testimonial' ) ) {
+            wp_insert_post( array(
+                'post_title'   => $testimonial['author'],
+                'post_content' => $testimonial['quote'],
+                'post_status'  => 'publish',
+                'post_type'    => 'testimonial',
+                'menu_order'   => $testimonial['order'],
+            ) );
+        }
+    }
+
+   
+
     wp_safe_redirect( admin_url( 'admin.php?page=wpforge-demo-importer&imported=true' ) );
     exit;
 }
