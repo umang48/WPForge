@@ -41,79 +41,73 @@ function wpforge_demo_page_html() {
 /**
  * 3. Process the Form Submission and Insert Data
  */
+/**
+ * 3. Process the Form Submission (Upgraded for Pages & Menus)
+ */
 function wpforge_process_demo_import() {
-    if ( ! isset( $_POST['wpforge_import_triggered'] ) ) {
-        return;
-    }
-
+    if ( ! isset( $_POST['wpforge_import_triggered'] ) ) return;
     if ( ! current_user_can( 'manage_options' ) || ! isset( $_POST['wpforge_import_demo_nonce'] ) || ! wp_verify_nonce( $_POST['wpforge_import_demo_nonce'], 'wpforge_import_demo_action' ) ) {
         wp_die( esc_html__( 'Security check failed.', 'wpforge' ) );
     }
 
-    // Taxonomies
-    $taxonomies = array( 'React', 'Laravel', 'WordPress', 'WooCommerce' );
-    $term_ids   = array();
-    foreach ( $taxonomies as $tax ) {
-        $term = term_exists( $tax, 'project_type' );
-        if ( ! $term ) {
-            $term = wp_insert_term( $tax, 'project_type' );
-        }
-        if ( ! is_wp_error( $term ) ) {
-            $term_ids[$tax] = is_array( $term ) ? $term['term_id'] : $term;
-        }
-    }
-
-    // Projects
-    $dummy_projects = array(
-        array(
-            'title'   => 'Fintech Dashboard',
-            'content' => 'A complex financial dashboard built with real-time data visualization. <!-- wp:paragraph --><p>This demonstrates advanced state management and secure API routing.</p><!-- /wp:paragraph -->',
-            'client'  => 'Apex Financial',
-            'tech'    => 'React, Redux, Node.js',
-            'url'     => 'https://example.com/fintech',
-            'terms'   => array( $term_ids['React'] )
-        ),
-        array(
-            'title'   => 'Global E-Commerce Platform',
-            'content' => 'High-converting multi-currency store with custom inventory management. <!-- wp:paragraph --><p>Features integrated shipping calculations and tax automation.</p><!-- /wp:paragraph -->',
-            'client'  => 'RetailCore',
-            'tech'    => 'WooCommerce, PHP 8',
-            'url'     => 'https://example.com/shop',
-            'terms'   => array( $term_ids['WooCommerce'], $term_ids['WordPress'] )
-        ),
+    // A. Generate Core Pages (Check for duplicates first)
+    $pages = array(
+        'Home'     => 'Welcome to WPForge Multipurpose Theme.',
+        'Blog'     => 'Our latest news and insights.',
+        'Services' => 'What we can do for you.',
+        'Contact'  => '<!-- wp:pattern {"slug":"wpforge/cta-section"} /-->'
     );
 
-    foreach ( $dummy_projects as $project ) {
-        if ( ! post_exists( $project['title'] ) ) {
-            $post_id = wp_insert_post( array(
-                'post_title'   => $project['title'],
-                'post_content' => $project['content'],
+    $page_ids = array();
+    foreach ( $pages as $title => $content ) {
+        $existing_page = get_page_by_title( $title );
+        if ( ! $existing_page ) {
+            $page_ids[$title] = wp_insert_post( array(
+                'post_title'   => $title,
+                'post_content' => $content,
                 'post_status'  => 'publish',
-                'post_type'    => 'project',
+                'post_type'    => 'page',
             ) );
-            if ( $post_id && ! is_wp_error( $post_id ) ) {
-                wp_set_object_terms( $post_id, $project['terms'], 'project_type' );
-                update_post_meta( $post_id, '_wpforge_project_client', $project['client'] );
-                update_post_meta( $post_id, '_wpforge_project_tech', $project['tech'] );
-                update_post_meta( $post_id, '_wpforge_project_url', $project['url'] );
-            }
+        } else {
+            $page_ids[$title] = $existing_page->ID;
         }
     }
 
-    // Services
-    $dummy_services = array( 'Custom Web Application Development', 'Headless E-Commerce Solutions' );
-    foreach ( $dummy_services as $service_title ) {
-        if ( ! post_exists( $service_title ) ) {
-            wp_insert_post( array(
-                'post_title'   => $service_title,
-                'post_content' => '<!-- wp:paragraph --><p>We provide enterprise-grade solutions tailored to your specific business requirements, ensuring scalability and robust security.</p><!-- /wp:paragraph -->',
-                'post_status'  => 'publish',
-                'post_type'    => 'service',
+    // B. Set Front Page and Posts Page
+    update_option( 'show_on_front', 'page' );
+    update_option( 'page_on_front', $page_ids['Home'] );
+    update_option( 'page_for_posts', $page_ids['Blog'] );
+
+    // C. Generate and Assign the Navigation Menu
+    $menu_name = 'WPForge Main Menu';
+    $menu_exists = wp_get_nav_menu_object( $menu_name );
+    
+    if ( ! $menu_exists ) {
+        $menu_id = wp_create_nav_menu( $menu_name );
+        
+        // Add items to menu
+        foreach ( $page_ids as $title => $id ) {
+            wp_update_nav_menu_item( $menu_id, 0, array(
+                'menu-item-title'     => $title,
+                'menu-item-object-id' => $id,
+                'menu-item-object'    => 'page',
+                'menu-item-type'      => 'post_type',
+                'menu-item-status'    => 'publish'
             ) );
         }
+        
+        // Assign to 'primary' theme location
+        $locations = get_theme_mod( 'nav_menu_locations', array() );
+        $locations['primary'] = $menu_id;
+        set_theme_mod( 'nav_menu_locations', $locations );
     }
 
-    // THE FIX: Redirect specifically to the new top-level admin.php URL
+    // D. Generate Dummy Projects (Duplicate check included)
+    if ( ! function_exists( 'post_exists' ) ) require_once ABSPATH . 'wp-admin/includes/post.php';
+    if ( ! post_exists( 'Fintech Dashboard' ) ) {
+        wp_insert_post( array( 'post_title' => 'Fintech Dashboard', 'post_content' => 'Sample content', 'post_status' => 'publish', 'post_type' => 'project' ) );
+    }
+
     wp_safe_redirect( admin_url( 'admin.php?page=wpforge-demo-importer&imported=true' ) );
     exit;
 }

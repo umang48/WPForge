@@ -113,6 +113,20 @@ input[type="submit"]:hover {
     transition: color 0.2s ease;
 }
 
+/* Ensure menu displays on desktop */
+.main-navigation ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 30px;
+}
+
+/* Hide the hamburger by default on desktop */
+.menu-toggle {
+    display: none;
+}
+
 .main-navigation a:hover {
     color: var(--wp--preset--color--primary);
 }

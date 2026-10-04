@@ -31,23 +31,15 @@
             <!-- Site Branding -->
             <div class="site-branding">
                 <?php
-                if ( has_custom_logo() ) :
-                    the_custom_logo();
-                else :
-                    ?>
-                    <h1 class="site-title" style="margin: 0; font-size: 24px;">
-                        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" style="text-decoration: none; color: #333;">
-                            <?php bloginfo( 'name' ); ?>
-                        </a>
+                $options = get_option( 'wpforge_theme_options' );
+                if ( ! empty( $options['logo'] ) ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
+                        <img src="<?php echo esc_url( $options['logo'] ); ?>" alt="<?php bloginfo( 'name' ); ?>" style="max-height: 50px;">
+                    </a>
+                <?php else : ?>
+                    <h1 class="site-title" style="margin: 0; font-size: 1.8em;">
+                        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" style="text-decoration: none; color: var(--wp--preset--color--primary);"><?php bloginfo( 'name' ); ?></a>
                     </h1>
-                    <?php
-                    $wpforge_description = get_bloginfo( 'description', 'display' );
-                    if ( $wpforge_description || is_customize_preview() ) :
-                        ?>
-                        <p class="site-description" style="margin: 5px 0 0; color: #666; font-size: 14px;">
-                            <?php echo esc_html( $wpforge_description ); ?>
-                        </p>
-                    <?php endif; ?>
                 <?php endif; ?>
             </div><!-- .site-branding -->
 

@@ -116,6 +116,12 @@ get_header();
 
 
     <!-- 4. DYNAMIC REST API SECTION -->
+     <?php 
+$options = get_option( 'wpforge_theme_options' ); 
+
+// Only show projects if toggle is checked (or default if not set)
+if ( isset( $options['show_projects'] ) && $options['show_projects'] === '1' ) : 
+?>
     <section class="api-projects-section" style="padding: 80px 0; background: #f0f7fa;">
         <div class="container">
             <header class="section-header" style="text-align: center; margin-bottom: 50px;">
@@ -131,6 +137,7 @@ get_header();
             </div>
         </div>
     </section>
+<?php endif; ?>
 
 </main><!-- #primary -->
 

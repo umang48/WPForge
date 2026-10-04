@@ -44,6 +44,15 @@ function wpforge_register_admin_menu() {
 }
 add_action( 'admin_menu', 'wpforge_register_admin_menu' );
 
+// Enqueue WordPress Media Uploader and Color Picker scripts
+function wpforge_admin_scripts( $hook ) {
+    if ( $hook !== 'toplevel_page_wpforge-options' ) return;
+    wp_enqueue_media();
+    wp_enqueue_style( 'wp-color-picker' );
+    wp_enqueue_script( 'wp-color-picker' );
+}
+add_action( 'admin_enqueue_scripts', 'wpforge_admin_scripts' );
+
 function wpforge_register_settings() {
     register_setting( 'wpforge_settings_group', 'wpforge_theme_options', 'wpforge_sanitize_options' );
 
@@ -64,6 +73,20 @@ function wpforge_register_settings() {
         'wpforge-options',
         'wpforge_general_section'
     );
+
+
+    // Global Settings
+    add_settings_section( 'wpforge_design_section', __( 'Design & Branding', 'wpforge' ), '__return_empty_string', 'wpforge-options' );
+    
+    add_settings_field( 'wpforge_logo', __( 'Custom Logo URL', 'wpforge' ), 'wpforge_logo_render', 'wpforge-options', 'wpforge_design_section' );
+    add_settings_field( 'wpforge_color', __( 'Primary Brand Color', 'wpforge' ), 'wpforge_color_render', 'wpforge-options', 'wpforge_design_section' );
+
+    // Homepage Section Toggles
+    add_settings_section( 'wpforge_home_section', __( 'Homepage Sections (Show/Hide)', 'wpforge' ), '__return_empty_string', 'wpforge-options' );
+    
+    add_settings_field( 'wpforge_show_projects', __( 'Show Recent Projects', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_projects' ) );
+    add_settings_field( 'wpforge_show_team', __( 'Show Team Section', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_team' ) );
+    add_settings_field( 'wpforge_show_testimonials', __( 'Show Testimonials', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_testimonials' ) );
 }
 add_action( 'admin_init', 'wpforge_register_settings' );
 
@@ -86,6 +109,45 @@ function wpforge_footer_text_render() {
     $footer_text = isset( $options['footer_text'] ) ? $options['footer_text'] : '';
     echo '<textarea name="wpforge_theme_options[footer_text]" rows="4" class="large-text code">' . esc_textarea( $footer_text ) . '</textarea>';
     echo '<p class="description">' . esc_html__( 'Basic HTML like <a> tags are allowed.', 'wpforge' ) . '</p>';
+}
+
+
+// 1. Logo Field with Media Uploader
+function wpforge_logo_render() {
+    $options = get_option( 'wpforge_theme_options' );
+    $val = isset( $options['logo'] ) ? $options['logo'] : '';
+    echo '<input type="text" id="wpforge_logo_url" name="wpforge_theme_options[logo]" value="' . esc_attr( $val ) . '" class="regular-text">';
+    echo ' <input type="button" id="wpforge_logo_button" class="button" value="' . __( 'Upload Image', 'wpforge' ) . '">';
+    ?>
+    <script>
+    jQuery(document).ready(function($){
+        $('#wpforge_logo_button').click(function(e) {
+            e.preventDefault();
+            var image = wp.media({ title: 'Upload Logo', multiple: false }).open().on('select', function(e){
+                var uploaded_image = image.state().get('selection').first();
+                var image_url = uploaded_image.toJSON().url;
+                $('#wpforge_logo_url').val(image_url);
+            });
+        });
+        $('.wpforge-color-picker').wpColorPicker();
+    });
+    </script>
+    <?php
+}
+
+// 2. Color Field
+function wpforge_color_render() {
+    $options = get_option( 'wpforge_theme_options' );
+    $val = isset( $options['primary_color'] ) ? $options['primary_color'] : '#0073aa';
+    echo '<input type="text" name="wpforge_theme_options[primary_color]" value="' . esc_attr( $val ) . '" class="wpforge-color-picker">';
+}
+
+// 3. Dynamic Toggle Field
+function wpforge_toggle_render( $args ) {
+    $options = get_option( 'wpforge_theme_options' );
+    $id = $args['id'];
+    $checked = isset( $options[$id] ) && $options[$id] === '1' ? 'checked' : '';
+    echo '<input type="checkbox" name="wpforge_theme_options[' . esc_attr( $id ) . ']" value="1" ' . $checked . '>';
 }
 
 /**
@@ -168,3 +230,13 @@ function wpforge_inject_analytics() {
     }
 }
 add_action( 'wp_head', 'wpforge_inject_analytics', 20 );
+
+function wpforge_apply_custom_styles() {
+    $options = get_option( 'wpforge_theme_options' );
+    if ( ! empty( $options['primary_color'] ) ) {
+        $color = esc_attr( $options['primary_color'] );
+        // Override the theme.json CSS variable globally
+        echo "<style>:root { --wp--preset--color--primary: {$color} !important; }</style>\n";
+    }
+}
+add_action( 'wp_head', 'wpforge_apply_custom_styles', 99 );
