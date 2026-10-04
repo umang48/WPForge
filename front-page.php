@@ -189,6 +189,80 @@ if ( isset( $options['show_projects'] ) && $options['show_projects'] === '1' ) :
     endif; 
     ?>
 
+    <?php 
+    // TEAM SECTION
+    if ( isset( $options['show_team'] ) && $options['show_team'] === '1' ) : 
+        
+        $team_args = array(
+            'post_type'      => 'team',
+            'posts_per_page' => 4,
+            'orderby'        => 'menu_order',
+            'order'          => 'ASC',
+        );
+        $team_query = new WP_Query( $team_args );
+        
+        if ( $team_query->have_posts() ) :
+    ?>
+        <section class="team-section" style="padding: 80px 0;">
+            <div class="container">
+                <header class="section-header" style="text-align: center; margin-bottom: 50px;">
+                    <h2 style="font-size: 2.2em;"><?php esc_html_e( 'Meet Our Leadership', 'wpforge' ); ?></h2>
+                    <p style="color: var(--wp--preset--color--text-muted); font-size: 1.1em; max-width: 600px; margin: 0 auto;">
+                        <?php esc_html_e( 'Decades of combined experience engineering scalable digital products.', 'wpforge' ); ?>
+                    </p>
+                </header>
+                
+                <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                    <?php 
+                    while ( $team_query->have_posts() ) : $team_query->the_post(); 
+                        $job_title = get_post_meta( get_the_ID(), '_wpforge_team_job_title', true );
+                        $linkedin  = get_post_meta( get_the_ID(), '_wpforge_team_linkedin', true );
+                        $github    = get_post_meta( get_the_ID(), '_wpforge_team_github', true );
+                    ?>
+                        <article class="team-card" style="text-align: center; background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #eee;">
+                            
+                            <div class="team-avatar" style="margin-bottom: 20px;">
+                                <?php if ( has_post_thumbnail() ) : ?>
+                                    <?php the_post_thumbnail( 'medium', array( 'style' => 'width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto;' ) ); ?>
+                                <?php else : ?>
+                                    <!-- Fallback Avatar -->
+                                    <div style="width: 150px; height: 150px; border-radius: 50%; background: #e0e0e0; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 3em;">
+                                        <?php echo esc_html( substr( get_the_title(), 0, 1 ) ); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            
+                            <h3 style="margin: 0 0 5px; font-size: 1.4em;"><?php the_title(); ?></h3>
+                            
+                            <?php if ( ! empty( $job_title ) ) : ?>
+                                <p style="color: var(--wp--preset--color--primary); font-weight: bold; margin: 0 0 15px;">
+                                    <?php echo esc_html( $job_title ); ?>
+                                </p>
+                            <?php endif; ?>
+
+                            <div class="team-bio" style="font-size: 0.95em; color: var(--wp--preset--color--text-muted); margin-bottom: 20px;">
+                                <?php the_excerpt(); ?>
+                            </div>
+                            
+                            <div class="team-social-links" style="display: flex; justify-content: center; gap: 10px;">
+                                <?php if ( ! empty( $linkedin ) ) : ?>
+                                    <a href="<?php echo esc_url( $linkedin ); ?>" target="_blank" rel="noopener noreferrer" style="color: #0a66c2; text-decoration: none; font-weight: bold;">LinkedIn</a>
+                                <?php endif; ?>
+                                <?php if ( ! empty( $github ) ) : ?>
+                                    <a href="<?php echo esc_url( $github ); ?>" target="_blank" rel="noopener noreferrer" style="color: #333; text-decoration: none; font-weight: bold;">GitHub</a>
+                                <?php endif; ?>
+                            </div>
+                            
+                        </article>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            </div>
+        </section>
+    <?php 
+        endif; 
+    endif; 
+    ?>
+
 </main><!-- #primary -->
 
 <?php

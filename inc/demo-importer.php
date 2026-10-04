@@ -112,28 +112,41 @@ function wpforge_process_demo_import() {
     // ... existing code for Pages, Menus, and Projects ...
 
     // E. Generate Dummy Team Members
+    // E. Generate Dummy Team Members
     $dummy_team = array(
         array(
-            'name'  => 'Jane Doe',
-            'bio'   => '<!-- wp:paragraph --><p>Lead Full-Stack Developer with over 10 years of experience specializing in React, Laravel, and enterprise WordPress architectures.</p><!-- /wp:paragraph -->',
-            'order' => 1
+            'name'     => 'Jane Doe',
+            'bio'      => '<!-- wp:paragraph --><p>Lead Full-Stack Developer with over 10 years of experience specializing in React, Laravel, and enterprise WordPress architectures.</p><!-- /wp:paragraph -->',
+            'title'    => 'Lead Full-Stack Developer',
+            'linkedin' => 'https://linkedin.com/',
+            'github'   => 'https://github.com/',
+            'order'    => 1
         ),
         array(
-            'name'  => 'John Smith',
-            'bio'   => '<!-- wp:paragraph --><p>Senior UI/UX Designer focused on creating WCAG-compliant, high-performance design systems for modern digital agencies.</p><!-- /wp:paragraph -->',
-            'order' => 2
+            'name'     => 'John Smith',
+            'bio'      => '<!-- wp:paragraph --><p>Senior UI/UX Designer focused on creating WCAG-compliant, high-performance design systems for modern digital agencies.</p><!-- /wp:paragraph -->',
+            'title'    => 'Senior UI/UX Designer',
+            'linkedin' => 'https://linkedin.com/',
+            'github'   => '',
+            'order'    => 2
         )
     );
 
     foreach ( $dummy_team as $member ) {
         if ( ! post_exists( $member['name'], '', '', 'team' ) ) {
-            wp_insert_post( array(
+            $post_id = wp_insert_post( array(
                 'post_title'   => $member['name'],
                 'post_content' => $member['bio'],
                 'post_status'  => 'publish',
                 'post_type'    => 'team',
                 'menu_order'   => $member['order'],
             ) );
+
+            if ( $post_id && ! is_wp_error( $post_id ) ) {
+                update_post_meta( $post_id, '_wpforge_team_job_title', $member['title'] );
+                update_post_meta( $post_id, '_wpforge_team_linkedin', $member['linkedin'] );
+                update_post_meta( $post_id, '_wpforge_team_github', $member['github'] );
+            }
         }
     }
 

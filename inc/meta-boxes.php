@@ -101,3 +101,93 @@ function wpforge_save_project_meta( $post_id ) {
     }
 }
 add_action( 'save_post_project', 'wpforge_save_project_meta' ); // Target specifically the 'project' post type
+
+
+/**
+ * 1. Register Team Meta Boxes
+ * Hooking into 'add_meta_boxes'
+ */
+function wpforge_add_team_meta_boxes() {
+    add_meta_box(
+        'wpforge_team_details',
+        __( 'Team Member Details', 'wpforge' ),
+        'wpforge_team_details_callback',
+        'team', // The CPT slug
+        'normal',
+        'high'
+    );
+}
+add_action( 'add_meta_boxes', 'wpforge_add_team_meta_boxes' );
+
+/**
+ * 2. HTML Callback for Team Meta Boxes
+ */
+function wpforge_team_details_callback( $post ) {
+    // Generate a nonce field for CSRF validation
+    wp_nonce_field( 'wpforge_save_team_data', 'wpforge_team_meta_nonce' );
+
+    // Retrieve existing values
+    $job_title = get_post_meta( $post->ID, '_wpforge_team_job_title', true );
+    $linkedin  = get_post_meta( $post->ID, '_wpforge_team_linkedin', true );
+    $github    = get_post_meta( $post->ID, '_wpforge_team_github', true );
+
+    // Render the form fields
+    ?>
+    <table class="form-table">
+        <tr>
+            <th><label for="wpforge_team_job_title"><?php esc_html_e( 'Job Title', 'wpforge' ); ?></label></th>
+            <td>
+                <input type="text" id="wpforge_team_job_title" name="wpforge_team_job_title" value="<?php echo esc_attr( $job_title ); ?>" class="regular-text" />
+            </td>
+        </tr>
+        <tr>
+            <th><label for="wpforge_team_linkedin"><?php esc_html_e( 'LinkedIn URL', 'wpforge' ); ?></label></th>
+            <td>
+                <input type="url" id="wpforge_team_linkedin" name="wpforge_team_linkedin" value="<?php echo esc_url( $linkedin ); ?>" class="regular-text" />
+            </td>
+        </tr>
+        <tr>
+            <th><label for="wpforge_team_github"><?php esc_html_e( 'GitHub URL', 'wpforge' ); ?></label></th>
+            <td>
+                <input type="url" id="wpforge_team_github" name="wpforge_team_github" value="<?php echo esc_url( $github ); ?>" class="regular-text" />
+            </td>
+        </tr>
+    </table>
+    <?php
+}
+
+/**
+ * 3. Securely Save Team Meta Data
+ */
+function wpforge_save_team_meta_boxes( $post_id ) {
+    // Check if our nonce is set and verify it
+    if ( ! isset( $_POST['wpforge_team_meta_nonce'] ) || ! wp_verify_nonce( $_POST['wpforge_team_meta_nonce'], 'wpforge_save_team_data' ) ) {
+        return;
+    }
+
+    // Ignore WordPress autosaves
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+
+    // Check user permissions
+    if ( isset( $_POST['post_type'] ) && 'team' === $_POST['post_type'] ) {
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return;
+        }
+    }
+
+    // Sanitize and save Job Title
+    if ( isset( $_POST['wpforge_team_job_title'] ) ) {
+        update_post_meta( $post_id, '_wpforge_team_job_title', sanitize_text_field( $_POST['wpforge_team_job_title'] ) );
+    }
+
+    // Sanitize and save URLs (esc_url_raw is specifically for saving URLs to the DB)
+    if ( isset( $_POST['wpforge_team_linkedin'] ) ) {
+        update_post_meta( $post_id, '_wpforge_team_linkedin', esc_url_raw( $_POST['wpforge_team_linkedin'] ) );
+    }
+    if ( isset( $_POST['wpforge_team_github'] ) ) {
+        update_post_meta( $post_id, '_wpforge_team_github', esc_url_raw( $_POST['wpforge_team_github'] ) );
+    }
+}
+add_action( 'save_post', 'wpforge_save_team_meta_boxes' );
