@@ -51,23 +51,46 @@ function wpforge_process_demo_import() {
     }
 
     // A. Generate Core Pages (Check for duplicates first)
+    // A. Generate Core Pages with Template Assignments
     $pages = array(
-        'Home'     => 'Welcome to WPForge Multipurpose Theme.',
-        'Blog'     => 'Our latest news and insights.',
-        'Services' => 'What we can do for you.',
-        'Contact'  => '<!-- wp:pattern {"slug":"wpforge/cta-section"} /-->'
+        'Home'     => array( 
+            'content'  => '<!-- wp:heading {"textAlign":"center"} --><h2 class="wp-block-heading has-text-align-center">Welcome to WPForge</h2><!-- /wp:heading --><!-- wp:paragraph {"align":"center"} --><p class="has-text-align-center">A high-performance digital agency theme.</p><!-- /wp:paragraph -->', 
+            'template' => '' 
+        ),
+        'About'    => array( 
+            'content'  => '<!-- wp:paragraph --><p>We are a team of senior developers specializing in native WordPress and React integrations, building scalable solutions without page-builder bloat.</p><!-- /wp:paragraph -->', 
+            'template' => '' 
+        ),
+        'Services' => array( 
+            'content'  => '<!-- wp:paragraph --><p>Explore our custom development, headless architecture, and security hardening services.</p><!-- /wp:paragraph -->', 
+            'template' => '' 
+        ),
+        'Contact'  => array( 
+            'content'  => '<!-- wp:paragraph --><p>Reach out to our technical team for your next big project.</p><!-- /wp:paragraph -->', 
+            'template' => 'page-templates/page-contact.php' // Assigns the custom template!
+        ),
+        'Blog'     => array( 
+            'content'  => '', 
+            'template' => '' 
+        )
     );
 
     $page_ids = array();
-    foreach ( $pages as $title => $content ) {
+    foreach ( $pages as $title => $data ) {
         $existing_page = get_page_by_title( $title );
         if ( ! $existing_page ) {
-            $page_ids[$title] = wp_insert_post( array(
+            $post_id = wp_insert_post( array(
                 'post_title'   => $title,
-                'post_content' => $content,
+                'post_content' => $data['content'],
                 'post_status'  => 'publish',
                 'post_type'    => 'page',
             ) );
+            
+            // Assign the custom page template if specified
+            if ( $post_id && ! empty( $data['template'] ) ) {
+                update_post_meta( $post_id, '_wp_page_template', $data['template'] );
+            }
+            $page_ids[$title] = $post_id;
         } else {
             $page_ids[$title] = $existing_page->ID;
         }

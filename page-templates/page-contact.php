@@ -35,11 +35,19 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['wpforge_contact_sub
             $form_status   = 'error';
         } else {
             
-            // Execution: Send the email to the site admin
-            $to      = get_option( 'admin_email' );
+            // Execution: Fetch dynamic settings
+            $options = get_option( 'wpforge_theme_options' );
+            
+            // Determine recipient (fallback to admin email if not set in theme options)
+            $to = ! empty( $options['contact_email'] ) ? sanitize_email( $options['contact_email'] ) : get_option( 'admin_email' );
+            
+            // Determine success message
+            $success_default = __( 'Thank you! Your message has been sent successfully.', 'wpforge' );
+            $success_msg = ! empty( $options['contact_msg'] ) ? sanitize_text_field( $options['contact_msg'] ) : $success_default;
+
             $subject = sprintf( __( 'New Website Inquiry from %s', 'wpforge' ), $name );
             
-            // Build safe headers to prevent email injection
+            // Build safe headers
             $headers   = array();
             $headers[] = 'From: WPForge Website <' . get_option( 'admin_email' ) . '>';
             $headers[] = 'Reply-To: ' . $name . ' <' . $email . '>';
@@ -47,9 +55,9 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['wpforge_contact_sub
             $mail_sent = wp_mail( $to, $subject, $message, $headers );
             
             if ( $mail_sent ) {
-                $form_feedback = __( 'Thank you! Your message has been sent successfully.', 'wpforge' );
+                $form_feedback = $success_msg;
                 $form_status   = 'success';
-                // Reset fields on success so the form clears
+                // Reset fields on success
                 $name = $email = $message = '';
             } else {
                 $form_feedback = __( 'There was a server issue sending your message. Please try again later.', 'wpforge' );

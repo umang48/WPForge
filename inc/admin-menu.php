@@ -87,13 +87,38 @@ function wpforge_register_settings() {
     add_settings_field( 'wpforge_show_projects', __( 'Show Recent Projects', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_projects' ) );
     add_settings_field( 'wpforge_show_team', __( 'Show Team Section', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_team' ) );
     add_settings_field( 'wpforge_show_testimonials', __( 'Show Testimonials', 'wpforge' ), 'wpforge_toggle_render', 'wpforge-options', 'wpforge_home_section', array( 'id' => 'show_testimonials' ) );
+
+    // Contact Form Settings Section
+    add_settings_section( 'wpforge_contact_section', __( 'Contact Form Routing', 'wpforge' ), '__return_empty_string', 'wpforge-options' );
+    
+    add_settings_field( 'wpforge_contact_email', __( 'Recipient Email Address', 'wpforge' ), 'wpforge_contact_email_render', 'wpforge-options', 'wpforge_contact_section' );
+    add_settings_field( 'wpforge_contact_msg', __( 'Success Message', 'wpforge' ), 'wpforge_contact_msg_render', 'wpforge-options', 'wpforge_contact_section' );
+
 }
 add_action( 'admin_init', 'wpforge_register_settings' );
 
 function wpforge_sanitize_options( $input ) {
     $sanitized = array();
+    
+    // Existing fields
     if ( isset( $input['ga_id'] ) ) $sanitized['ga_id'] = sanitize_text_field( $input['ga_id'] );
     if ( isset( $input['footer_text'] ) ) $sanitized['footer_text'] = wp_kses_post( $input['footer_text'] );
+    if ( isset( $input['logo'] ) ) $sanitized['logo'] = esc_url_raw( $input['logo'] );
+    if ( isset( $input['primary_color'] ) ) $sanitized['primary_color'] = sanitize_hex_color( $input['primary_color'] );
+    
+    // Toggles
+    if ( isset( $input['show_projects'] ) ) $sanitized['show_projects'] = '1';
+    if ( isset( $input['show_team'] ) ) $sanitized['show_team'] = '1';
+    if ( isset( $input['show_testimonials'] ) ) $sanitized['show_testimonials'] = '1';
+
+    // NEW: Contact Fields
+    if ( isset( $input['contact_email'] ) ) {
+        $sanitized['contact_email'] = sanitize_email( $input['contact_email'] );
+    }
+    if ( isset( $input['contact_msg'] ) ) {
+        $sanitized['contact_msg'] = sanitize_text_field( $input['contact_msg'] );
+    }
+    
     return $sanitized;
 }
 
@@ -240,3 +265,18 @@ function wpforge_apply_custom_styles() {
     }
 }
 add_action( 'wp_head', 'wpforge_apply_custom_styles', 99 );
+
+// Contact Email Field
+function wpforge_contact_email_render() {
+    $options = get_option( 'wpforge_theme_options' );
+    $val = isset( $options['contact_email'] ) ? $options['contact_email'] : get_option('admin_email');
+    echo '<input type="email" name="wpforge_theme_options[contact_email]" value="' . esc_attr( $val ) . '" class="regular-text">';
+    echo '<p class="description">' . esc_html__( 'The email address that will receive submissions from the custom contact page template. Defaults to site admin.', 'wpforge' ) . '</p>';
+}
+
+// Contact Success Message Field
+function wpforge_contact_msg_render() {
+    $options = get_option( 'wpforge_theme_options' );
+    $val = isset( $options['contact_msg'] ) ? $options['contact_msg'] : __( 'Thank you! Your message has been sent successfully.', 'wpforge' );
+    echo '<input type="text" name="wpforge_theme_options[contact_msg]" value="' . esc_attr( $val ) . '" class="large-text">';
+}
