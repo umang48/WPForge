@@ -53,6 +53,13 @@
 
             <!-- Primary Navigation -->
             <nav id="site-navigation" class="main-navigation" aria-label="<?php esc_attr_e( 'Primary menu', 'wpforge' ); ?>">
+                
+                <!-- Accessible Mobile Menu Toggle -->
+                <button id="menu-toggle" class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+                    <span class="screen-reader-text"><?php esc_html_e( 'Menu', 'wpforge' ); ?></span>
+                    <span class="hamburger-icon" aria-hidden="true"></span>
+                </button>
+
                 <?php
                 wp_nav_menu(
                     array(
@@ -60,7 +67,7 @@
                         'menu_id'        => 'primary-menu',
                         'container'      => false,
                         'fallback_cb'    => false, // Don't fall back to wp_page_menu
-                        'items_wrap'     => '<ul id="%1$s" class="%2$s" style="display: flex; list-style: none; gap: 20px; margin: 0; padding: 0;">%3$s</ul>',
+                        'items_wrap'     => '<ul id="%1$s" class="%2$s" style="list-style: none; margin: 0; padding: 0;">%3$s</ul>',
                     )
                 );
                 ?>

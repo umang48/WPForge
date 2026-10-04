@@ -1,0 +1,142 @@
+/* 
+ * WPForge Responsive Styles
+ */
+
+/* Baseline (Desktop) settings for the menu button */
+.menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 101;
+}
+
+.hamburger-icon {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--wp--preset--color--primary);
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: var(--wp--preset--color--primary);
+    left: 0;
+    transition: transform 0.3s ease, top 0.3s ease;
+}
+
+.hamburger-icon::before {
+    top: -8px;
+}
+
+.hamburger-icon::after {
+    top: 8px;
+}
+
+/* Screen Reader Text Utility */
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* ==========================================================
+   Mobile Styles (Max-width: 768px)
+   ========================================================== */
+@media screen and (max-width: 768px) {
+    
+    .site-header .container {
+        position: relative;
+    }
+
+    /* Show the hamburger button */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Hide the desktop menu initially and reset it for mobile */
+    .main-navigation ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; /* Push it just below the header */
+        left: 0;
+        width: 100%;
+        background-color: var(--wp--preset--color--surface);
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        z-index: 100;
+        border-top: 1px solid #eee;
+    }
+
+    /* Show the menu when the JS toggles the class */
+    .main-navigation.is-toggled ul {
+        display: flex;
+        animation: fadeIn 0.3s ease forwards;
+    }
+
+    .main-navigation ul li {
+        width: 100%;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .main-navigation ul li:last-child {
+        border-bottom: none;
+    }
+
+    .main-navigation ul li a {
+        display: block;
+        padding: 15px 0;
+    }
+
+    /* Animate the hamburger icon into an 'X' */
+    .menu-toggle[aria-expanded="true"] .hamburger-icon {
+        background-color: transparent;
+    }
+
+    .menu-toggle[aria-expanded="true"] .hamburger-icon::before {
+        top: 0;
+        transform: rotate(45deg);
+    }
+
+    .menu-toggle[aria-expanded="true"] .hamburger-icon::after {
+        top: 0;
+        transform: rotate(-45deg);
+    }
+
+    /* Ensure responsive structural adjustments for single layouts */
+    .project-layout,
+    .service-layout,
+    .contact-layout {
+        flex-direction: column;
+        gap: 30px !important;
+    }
+
+    .project-content,
+    .project-meta-sidebar,
+    .service-content,
+    .service-sidebar {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

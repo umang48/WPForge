@@ -35,11 +35,24 @@
             </div>
 
             <div class="site-info" style="text-align: center; border-top: 1px solid #ddd; padding-top: 20px; font-size: 14px; color: #666;">
-                <p>
-                    &copy; <?php echo esc_html( date_i18n( __( 'Y', 'wpforge' ) ) ); ?> 
-                    <?php echo esc_html( get_bloginfo( 'name' ) ); ?>. 
-                    <?php esc_html_e( 'All rights reserved.', 'wpforge' ); ?>
-                </p>
+                <?php
+                // Fetch our custom theme options
+                $options = get_option( 'wpforge_theme_options' );
+                
+                if ( ! empty( $options['footer_text'] ) ) {
+                    // Output the custom text (we use wp_kses_post to safely render permitted HTML)
+                    echo wp_kses_post( $options['footer_text'] );
+                } else {
+                    // Fallback to the default dynamic text if the field is empty
+                    ?>
+                    <p>
+                        &copy; <?php echo esc_html( date_i18n( __( 'Y', 'wpforge' ) ) ); ?> 
+                        <?php echo esc_html( get_bloginfo( 'name' ) ); ?>. 
+                        <?php esc_html_e( 'All rights reserved.', 'wpforge' ); ?>
+                    </p>
+                    <?php
+                }
+                ?>
             </div><!-- .site-info -->
             
         </div><!-- .container -->
