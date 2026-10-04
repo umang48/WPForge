@@ -7,17 +7,22 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * 1. Register the Menu Pages (Centralized)
+ */
 function wpforge_register_admin_menu() {
+    // Parent Menu
     add_menu_page(
         __( 'WPForge Settings', 'wpforge' ),
         __( 'WPForge', 'wpforge' ),
         'manage_options',
         'wpforge-options',
         'wpforge_general_settings_page',
-        'dashicons-code-standards', // Updated icon to look more technical
+        'dashicons-code-standards',
         59
     );
     
+    // Submenu 1: General Settings (Uses same slug as parent)
     add_submenu_page(
         'wpforge-options',
         __( 'General Settings', 'wpforge' ),
@@ -25,6 +30,16 @@ function wpforge_register_admin_menu() {
         'manage_options',
         'wpforge-options',
         'wpforge_general_settings_page'
+    );
+
+    // Submenu 2: Demo Importer
+    add_submenu_page(
+        'wpforge-options',
+        __( 'Demo Importer', 'wpforge' ),
+        __( 'Demo Importer', 'wpforge' ),
+        'manage_options',
+        'wpforge-demo-importer',
+        'wpforge_demo_page_html' // This callback lives in demo-importer.php
     );
 }
 add_action( 'admin_menu', 'wpforge_register_admin_menu' );

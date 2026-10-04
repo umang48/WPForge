@@ -7,20 +7,6 @@
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * 1. Add the menu page under the WPForge custom menu
- */
-function wpforge_register_demo_page() {
-    add_submenu_page(
-        'wpforge-options',                   
-        __( 'Demo Importer', 'wpforge' ),
-        __( 'Demo Importer', 'wpforge' ),
-        'manage_options',
-        'wpforge-demo-importer',
-        'wpforge_demo_page_html'
-    );
-}
-add_action( 'admin_menu', 'wpforge_register_demo_page' );
 
 /**
  * 2. Render the Admin Page HTML (Professional UI)
