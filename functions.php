@@ -34,6 +34,7 @@ $wpforge_includes = array(
 	'/inc/security.php',          // Security hardening and safe database queries.
 	'/inc/demo-importer.php',     // Programmatic demo data importer.
 	'/inc/admin-menu.php',        // Admin menu and settings page.
+	'/inc/seo.php',               // SEO enhancements and plugin compatibility.
 );
 
 foreach ( $wpforge_includes as $file ) {

@@ -9,6 +9,12 @@ get_header(); ?>
 
 <main id="primary" class="site-main">
     <div class="container">
+        <?php 
+        // Render SEO Breadcrumbs
+        if ( function_exists( 'wpforge_breadcrumbs' ) ) {
+            wpforge_breadcrumbs();
+        } 
+        ?>
         <header class="page-header">
             <?php
             the_archive_title( '<h1 class="page-title">', '</h1>' );

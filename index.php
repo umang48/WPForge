@@ -14,7 +14,12 @@ get_header();
 
 <main id="primary" class="site-main" style="padding: 60px 0;">
     <div class="container" style="display: flex; gap: 40px; flex-wrap: wrap;">
-        
+        <?php 
+        // Render SEO Breadcrumbs
+        if ( function_exists( 'wpforge_breadcrumbs' ) ) {
+            wpforge_breadcrumbs();
+        } 
+        ?>
         <!-- Main Blog Content Area -->
         <div class="main-content" style="flex: 2; min-width: 300px;">
             <?php

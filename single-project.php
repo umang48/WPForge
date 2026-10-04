@@ -12,7 +12,7 @@ get_header();
     <div class="container">
 
     <?php 
-        // Output SEO Breadcrumbs
+        // Render SEO Breadcrumbs
         if ( function_exists( 'wpforge_breadcrumbs' ) ) {
             wpforge_breadcrumbs();
         } 
